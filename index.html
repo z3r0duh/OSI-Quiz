@@ -1,136 +1,163 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive OSI Quiz</title>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide.js"></script>
 </head>
 <body>
-  <h1>Interactive OSI Quiz</h1>
+    <h1>Interactive OSI Quiz</h1>
 
-  <!-- Start Quiz Button -->
-  <button type="button" id="start-quiz">Start Quiz</button>
+    <!-- Start Quiz Button -->
+    <button type="button" id="start-quiz">Start Quiz</button>
 
-  <!-- OSI Description (Initially Hidden) -->
-  <div id="description" style="display:none;">
-    <p>
-      The Open Systems Interconnection (OSI) model is a theoretical framework that describes how computer systems 
-      communicate with each other over a network. It's made up of seven layers, each with a specific function, 
-      that work together to transmit data between devices.
-    </p>
-    <button type="button" id="next-step">Proceed to Quiz</button>
-  </div>
-
-  <!-- Quiz Form (Initially Hidden) -->
-  <form id="quiz-form" style="display:none;">
-    <div>
-      <label for="q1">1. What does OSI stand for?</label>
-      <input type="text" id="q1" name="q1">
-    </div>
-    <div>
-      <label for="q2">2. How many layers is the OSI made up of?</label>
-      <input type="text" id="q2" name="q2">
+    <!-- OSI Description (Initially Hidden) -->
+    <div id="description" style="display:none;">
+        <p>
+            The Open Systems Interconnection (OSI) model is a theoretical framework that describes how computer systems 
+            communicate with each other over a network. It's made up of seven layers, each with a specific function 
+            that work together to transmit data between devices. The seven layers are: 
+        </p>
+        <ul>
+            <li>7. Application</li>
+            <li>6. Presentation</li>
+            <li>5. Session</li>
+            <li>4. Transport</li>
+            <li>3. Network</li>
+            <li>2. Data Link</li>
+            <li>1. Physical</li>
+        </ul>
+        <button type="button" id="next-step">Proceed to Quiz</button>
     </div>
 
-    <h3>Identify the OSI Layers (from layer 7 to layer 1):</h3>
-    <div>
-      <label for="layer7">Layer 7:</label>
-      <input type="text" id="layer7" name="layer7">
-    </div>
-    <div>
-      <label for="layer6">Layer 6:</label>
-      <input type="text" id="layer6" name="layer6">
-    </div>
-    <div>
-      <label for="layer5">Layer 5:</label>
-      <input type="text" id="layer5" name="layer5">
-    </div>
-    <div>
-      <label for="layer4">Layer 4:</label>
-      <input type="text" id="layer4" name="layer4">
-    </div>
-    <div>
-      <label for="layer3">Layer 3:</label>
-      <input type="text" id="layer3" name="layer3">
-    </div>
-    <div>
-      <label for="layer2">Layer 2:</label>
-      <input type="text" id="layer2" name="layer2">
-    </div>
-    <div>
-      <label for="layer1">Layer 1:</label>
-      <input type="text" id="layer1" name="layer1">
-    </div>
+    <!-- Quiz Form (Initially Hidden) -->
+    <form id="quiz-form" style="display:none;">
+        <div>
+            <label for="q1">1. What does OSI stand for?</label>
+            <input type="text" id="q1" name="q1">
+        </div>
+        <div>
+            <label for="q2">2. How many layers is the OSI made up of?</label>
+            <input type="text" id="q2" name="q2">
+        </div>
 
-    <button type="button" id="submit-quiz">Submit Quiz</button>
-  </form>
+        <h3>Identify the OSI Layers (from layer 7 to layer 1):</h3>
+        <div>
+            <label for="layer7">Layer 7:</label>
+            <input type="text" id="layer7" name="layer7">
+        </div>
+        <div>
+            <label for="layer6">Layer 6:</label>
+            <input type="text" id="layer6" name="layer6">
+        </div>
+        <div>
+            <label for="layer5">Layer 5:</label>
+            <input type="text" id="layer5" name="layer5">
+        </div>
+        <div>
+            <label for="layer4">Layer 4:</label>
+            <input type="text" id="layer4" name="layer4">
+        </div>
+        <div>
+            <label for="layer3">Layer 3:</label>
+            <input type="text" id="layer3" name="layer3">
+        </div>
+        <div>
+            <label for="layer2">Layer 2:</label>
+            <input type="text" id="layer2" name="layer2">
+        </div>
+        <div>
+            <label for="layer1">Layer 1:</label>
+            <input type="text" id="layer1" name="layer1">
+        </div>
 
-  <h2>Quiz Results:</h2>
-  <pre id="output"></pre>
+        <button type="button" id="submit-quiz">Submit Quiz</button>
+    </form>
 
-  <script>
-    // Function to load Pyodide and run the quiz
-    async function loadPyodideAndRunQuiz() {
-      let pyodide = await loadPyodide();
-      
-      // Get form data
-      let q1 = document.getElementById("q1").value;
-      let q2 = document.getElementById("q2").value;
-      let layer7 = document.getElementById("layer7").value;
-      let layer6 = document.getElementById("layer6").value;
-      let layer5 = document.getElementById("layer5").value;
-      let layer4 = document.getElementById("layer4").value;
-      let layer3 = document.getElementById("layer3").value;
-      let layer2 = document.getElementById("layer2").value;
-      let layer1 = document.getElementById("layer1").value;
+    <h2>Quiz Results:</h2>
+    <pre id="output"></pre>
 
-      // Python code as a string with dynamic inputs
-      let code = `
-        def osi_quiz(q1, q2, layers):
-            osi_layers = ["application", "presentation", "session", "transport", "network", "data link", "physical"]
-            result = ""
-
-            # Question 1
-            if q1.strip().lower() == "open systems interconnection":
-                result += "Correct!\\n"
-            else:
-                result += "Incorrect! The correct answer is 'Open Systems Interconnection'.\\n"
+    <script>
+        // Function to load Pyodide and run the quiz
+        async function loadPyodideAndRunQuiz() {
+            let pyodide = await loadPyodide();
             
-            # Question 2
-            if q2.strip().lower() == "seven layers":
-                result += "Correct!\\n"
-            else:
-                result += "Incorrect! The correct answer is 'seven layers'.\\n"
+            // Get form data
+            let q1 = document.getElementById("q1").value;
+            let q2 = document.getElementById("q2").value;
+            let layer7 = document.getElementById("layer7").value;
+            let layer6 = document.getElementById("layer6").value;
+            let layer5 = document.getElementById("layer5").value;
+            let layer4 = document.getElementById("layer4").value;
+            let layer3 = document.getElementById("layer3").value;
+            let layer2 = document.getElementById("layer2").value;
+            let layer1 = document.getElementById("layer1").value;
 
-            # Check OSI layers from layer 7 to layer 1
-            for i in range(7):
-                if layers[i].strip().lower() == osi_layers[i]:
-                    result += f"Correct! Layer {7 - i} is {osi_layers[i].capitalize()}\\n"
-                else:
-                    result += f"Incorrect! Layer {7 - i} is {osi_layers[i].capitalize()}\\n"
+            // Escape special characters in user inputs to prevent errors
+            q1 = q1.replace(/"/g, '\\"');
+            q2 = q2.replace(/"/g, '\\"');
+            layer7 = layer7.replace(/"/g, '\\"');
+            layer6 = layer6.replace(/"/g, '\\"');
+            layer5 = layer5.replace(/"/g, '\\"');
+            layer4 = layer4.replace(/"/g, '\\"');
+            layer3 = layer3.replace(/"/g, '\\"');
+            layer2 = layer2.replace(/"/g, '\\"');
+            layer1 = layer1.replace(/"/g, '\\"');
 
-            return result
+            // Python code as a string with dynamic inputs
+            let code = `
+                def osi_quiz(q1, q2, layers):
+                    osi_layers = ["application", "presentation", "session", "transport", "network", "data link", "physical"]
+                    result = ""
 
-        osi_quiz("${q1}", "${q2}", ["${layer7}", "${layer6}", "${layer5}", "${layer4}", "${layer3}", "${layer2}", "${layer1}"])
-      `;
+                    # Question 1
+                    if q1.strip().lower() == "open systems interconnection":
+                        result += "Correct!\\n"
+                    else:
+                        result += "Incorrect! The correct answer is 'Open Systems Interconnection'.\\n"
+                    
+                    # Question 2
+                    if q2.strip() == "7" or q2.strip().lower() == "seven layers":
+                        result += "Correct!\\n"
+                    else:
+                        result += "Incorrect! The correct answer is 'seven layers'.\\n"
 
-      // Run Python code via Pyodide
-      let result = await pyodide.runPythonAsync(code);
-      document.getElementById('output').textContent = result;
-    }
+                    # Check OSI layers from layer 7 to layer 1
+                    for i in range(7):
+                        if layers[i].strip().lower() == osi_layers[i]:
+                            result += f"Correct! Layer {7 - i} is {osi_layers[i].capitalize()}\\n"
+                        else:
+                            result += f"Incorrect! Layer {7 - i} is {osi_layers[i].capitalize()}\\n"
 
-    // Show OSI description when Start Quiz is clicked
-    document.getElementById('start-quiz').addEventListener('click', function() {
-      document.getElementById('start-quiz').style.display = 'none';
-      document.getElementById('description').style.display = 'block';
-    });
+                    return result
 
-    // Proceed to quiz after description is shown
-    document.getElementById('next-step').addEventListener('click', function() {
-      document.getElementById('description').style.display = 'none';
-      document.getElementById('quiz-form').style.display = 'block';
-    });
+                osi_quiz("${q1}", "${q2}", ["${layer7}", "${layer6}", "${layer5}", "${layer4}", "${layer3}", "${layer2}", "${layer1}"])
+            `;
 
-    // Run the quiz when the Submit button is clicked
-    document.getElementById('submit-quiz').addEventListener('click', loadPyodideAndRunQuiz);
-  </script>
+            // Run Python code via Pyodide
+            try {
+                let result = await pyodide.runPythonAsync(code);
+                document.getElementById('output').textContent = result;
+            } catch (err) {
+                document.getElementById('output').textContent = `Error: ${err.message}`;
+            }
+        }
+
+        // Show OSI description when Start Quiz is clicked
+        document.getElementById('start-quiz').addEventListener('click', function() {
+            document.getElementById('start-quiz').style.display = 'none';
+            document.getElementById('description').style.display = 'block';
+        });
+
+        // Proceed to quiz after description is shown
+        document.getElementById('next-step').addEventListener('click', function() {
+            document.getElementById('description').style.display = 'none';
+            document.getElementById('quiz-form').style.display = 'block';
+        });
+
+        // Run the quiz when the Submit button is clicked
+        document.getElementById('submit-quiz').addEventListener('click', loadPyodideAndRunQuiz);
+    </script>
 </body>
 </html>
